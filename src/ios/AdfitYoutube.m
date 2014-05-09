@@ -17,38 +17,47 @@
     adfit =  [[AdfitYoutubeViewController alloc] init];
     [adfit setYoutubeDelegate:self];
     [adfit setYoutubeId:videoId];
-    //[self.viewController presentViewController:adfit animated:YES completion:nil];
+    [self.viewController presentViewController:adfit animated:YES completion:nil];
     //[self presentModalViewController:adfit animated:YES];
     //[self.viewController presentModalViewController:adfit animated:YES];
-    [self.viewController.view addSubview:adfit.view];
+    //[self.viewController.view addSubview:adfit.view];
 }
 
 - (void) closeYoutubeWithFinish:(BOOL) finish{
-	
-	CDVPluginResult *commandResult;
+    
 	if(finish){
-		commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"ended"];
-	}else{
-		commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"not ended"];
+        
+		CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"ended"];
+    
+        [self.commandDelegate sendPluginResult:commandResult callbackId:self.callbackId];
 	}
-
-	[self.commandDelegate sendPluginResult:commandResult callbackId:self.callbackId];
-	[adfit.view removeFromSuperview];
+    else{
+		CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"not ended"];
+        [self.commandDelegate sendPluginResult:commandResult callbackId:self.callbackId];
+	}
+    
+    
+    
     [adfit setYoutubeDelegate:nil];
+	//[adfit.view removeFromSuperview];
 	adfit = nil;
 
-	/*
+	
 	[self.viewController dismissViewControllerAnimated:YES completion:^{
             
     }];
-	*/
+    
+    
 
 	//[self performSelectorOnMainThread:@selector(closeonMainThread) withObject:nil waitUntilDone:NO];
 }
 
 -(void) closeonMainThread{
 	//[adfit dismissModalViewControllerAnimated:NO];
-	[self.viewController dismissViewControllerAnimated:YES completion:nil];
+	//[self.viewController dismissViewControllerAnimated:YES completion:nil];
+    [adfit.view removeFromSuperview];
+    //[adfit setYoutubeDelegate:nil];
+    //adfit = nil;
 }
 
 @end
