@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+           id="com.jandystudio.adfit.youtube"
+      version="0.0.1">
+
+    <name>Youtube</name>
+    <description>Cordova Youtube Plugin</description>
+    <license>Apache 2.0</license>
+    <keywords>cordova,modal</keywords>
+    <repo></repo>
+
+    <engines>
+      <engine name="cordova" version=">=3.1.0" /><!-- Needs cordova/urlutil -->
+    </engines>
+
+    <js-module src="www/adfityoutube.js" name="Adfityoutube">
+        <clobbers target="Adfityoutube" />
+    </js-module>
+
+   
+
+    <!-- ios -->
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="AdfitYoutube">
+                <param name="ios-package" value="AdfitYoutube" />
+            </feature>
+        </config-file>
+
+        <header-file src="src/ios/AdfitYoutube.h" />
+	    <source-file src="src/ios/AdfitYoutube.m" />
+
+        <header-file src="src/ios/HCYoutubeParser.h" />
+        <source-file src="src/ios/HCYoutubeParser.m" />
+
+        <header-file src="src/ios/AdfitYoutubeViewController.h" />
+        <source-file src="src/ios/AdfitYoutubeViewController.m" />
+      
+        <framework src="QuartzCore.framework" />
+        <framework src="MediaPlayer.framework" />
+    </platform>
+
+</plugin>
