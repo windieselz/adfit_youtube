@@ -33,6 +33,19 @@
     [_activityIndicator setHidesWhenStopped:YES];
     [self.view addSubview:_activityIndicator];
     [self loadYoutubeMetadata];
+
+    UIButton * btClose = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    [btClose setFrame:CGRectMake(10, 20, 48, 32)];
+    [btClose setTitle:@"Done" forState:UIControlStateNormal];
+    [btClose addTarget:self action:@selector(closeMp:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:btClose];
+
+    
+    CGRect timerFrame = CGRectMake(10, self.view.frame.size.height -30, self.view.frame.size.width , 30);
+    timerLabel = [[UILabel alloc] initWithFrame:timerFrame];
+    [timerLabel setBackgroundColor:[UIColor clearColor]];
+    [timerLabel setTextColor:[UIColor whiteColor]];
+    [self.view addSubview:timerLabel];
 }
 
 -(void) loadYoutubeMetadata{
@@ -73,6 +86,7 @@
     mp.controlStyle = MPMovieControlStyleNone;
     mp.fullscreen = NO;
     [mp prepareToPlay];
+
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(playbackFinished:)
                                                  name:MPMoviePlayerPlaybackDidFinishNotification
@@ -89,24 +103,7 @@
     // Add the moviePlayer's view as a subview of a my UIViewController's view.
     mp.view.frame = CGRectMake(0, 80, self.view.frame.size.width, 300);
     mp.view.center = self.view.center;
-
-    
-    UIButton * btClose = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [btClose setFrame:CGRectMake(10, 20, 48, 32)];
-    [btClose setTitle:@"Done" forState:UIControlStateNormal];
-    [btClose addTarget:self action:@selector(closeMp:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:btClose];
-
-    
-    CGRect timerFrame = CGRectMake(10, self.view.frame.size.height -30, self.view.frame.size.width , 30);
-    timerLabel = [[UILabel alloc] initWithFrame:timerFrame];
-    [timerLabel setBackgroundColor:[UIColor clearColor]];
-    [timerLabel setTextColor:[UIColor whiteColor]];
-    [self.view addSubview:timerLabel];
-    
     mp.view.backgroundColor = [UIColor blackColor];
-    [self.view addSubview:mp.view];
-    [_activityIndicator stopAnimating];
 }
 
 -(IBAction)handleTimer:(id)sender{
@@ -127,8 +124,10 @@
     MPMoviePlayerController *player = notification.object;
     if (player.loadState && MPMovieLoadStatePlayable)
     {
-        NSLog(@"Movie is Ready to Play");
+        //NSLog(@"Movie is Ready to Play");
         if(![mpTimer isValid]){
+        [_activityIndicator stopAnimating];
+        [self.view addSubview:mp.view];
         duration = mp.duration;
         [mp play];
         mpTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
