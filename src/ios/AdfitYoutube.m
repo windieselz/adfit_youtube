@@ -17,10 +17,10 @@
     adfit =  [[AdfitYoutubeViewController alloc] init];
     [adfit setYoutubeDelegate:self];
     [adfit setYoutubeId:videoId];
-    [self.viewController presentViewController:adfit animated:YES completion:nil];
+    //[self.viewController presentViewController:adfit animated:YES completion:nil];
     //[self presentModalViewController:adfit animated:YES];
     //[self.viewController presentModalViewController:adfit animated:YES];
-    //[self.viewController.view addSubview:adfit.view];
+    [self.viewController.view addSubview:adfit.view];
 }
 
 - (void) closeYoutubeWithFinish:(BOOL) finish{
@@ -39,14 +39,14 @@
     
     
     [adfit setYoutubeDelegate:nil];
-	//[adfit.view removeFromSuperview];
+	[adfit.view removeFromSuperview];
 	adfit = nil;
 
-	
+	/*
 	[self.viewController dismissViewControllerAnimated:YES completion:^{
             
     }];
-    
+    */
     
 
 	//[self performSelectorOnMainThread:@selector(closeonMainThread) withObject:nil waitUntilDone:NO];
