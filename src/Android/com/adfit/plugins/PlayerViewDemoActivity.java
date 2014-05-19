@@ -17,82 +17,107 @@
 package com.adfit.plugins;
 
 
+import java.util.HashMap;
+
+import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer.ErrorReason;
 import com.google.android.youtube.player.YouTubePlayer.PlaybackEventListener;
 import com.google.android.youtube.player.YouTubePlayer.PlayerStateChangeListener;
 import com.google.android.youtube.player.YouTubePlayer.PlayerStyle;
 import com.google.android.youtube.player.YouTubePlayer.PlaylistEventListener;
+import com.google.android.youtube.player.YouTubePlayer.OnInitializedListener; 
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubePlayer.Provider;
 import com.google.android.youtube.player.YouTubePlayerView;
 
+import android.app.ActionBar;
 import android.app.ActionBar.LayoutParams;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 
+import org.apache.cordova.CallbackContext;
 /**
  * A simple YouTube Android API demo application which shows how to create a simple application that
  * displays a YouTube Video in a {@link YouTubePlayerView}.
  * <p>
  * Note, to use a {@link YouTubePlayerView}, your activity must extend {@link YouTubeBaseActivity}.
  */
-public class PlayerViewDemoActivity extends YouTubeFailureRecoveryActivity {
+public class PlayerViewDemoActivity extends YouTubeBaseActivity {
   private YouTubePlayerView youTubeView;	
   private YouTubePlayer player;
   private MyPlaylistEventListener playlistEventListener;
   private MyPlayerStateChangeListener playerStateChangeListener;
   private MyPlaybackEventListener playbackEventListener;
+  private CallbackContext callback;
+  private String ytId;
   
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
- 
+    ActionBar actionBar = getActionBar();
+	actionBar.hide();
+	
+	/*
+	 if (Build.VERSION.SDK_INT < 16) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
+	 */
+	
     LinearLayout ll = new LinearLayout(this);
     ll.setOrientation(LinearLayout.VERTICAL);
-    ll.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-    /*
-    TextView tv1 = new TextView(this);
-    tv1.setText("HELLO");
-    ll.addView(tv1);
-    */
-    
+    ll.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));   
     setContentView(ll);
-    //setContentView(R.layout.playerview_demo);
-
-    //YouTubePlayerView youTubeView = (YouTubePlayerView) findViewById(R.id.youtube_view);
-    youTubeView = new YouTubePlayerView(this);
-    ll.addView(youTubeView);
-    youTubeView.initialize(DeveloperKey.DEVELOPER_KEY, this);
     
+    Intent intent = getIntent();
+    ytId = intent.getStringExtra("youtubeid");
+    
+    youTubeView = new YouTubePlayerView(this);
+    youTubeView.initialize("AIzaSyCcvPX2czx97G2gF1BkilCaJIv4do7PA9E", new OnInitializedListener() {
+		@Override
+		public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult error){
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean wasRestored){
+			// TODO Auto-generated method stub
+			 player.setPlayerStyle(PlayerStyle.CHROMELESS);
+			 player.setPlaylistEventListener(playlistEventListener);
+			 player.setPlayerStateChangeListener(playerStateChangeListener);
+			 player.setPlaybackEventListener(playbackEventListener);
+			 //player.cueVideo("4x1dDNiBje8");
+			 player.loadVideo(ytId); 
+		}
+    });
+    
+    ll.addView(youTubeView);
     playlistEventListener = new MyPlaylistEventListener();
     playerStateChangeListener = new MyPlayerStateChangeListener();
     playbackEventListener = new MyPlaybackEventListener();
-  }
-
-  @Override
-  public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player,
-      boolean wasRestored) {
-    if (!wasRestored) {
-      
-    }
-    
-    this.player = player;
-    player.setPlayerStyle(PlayerStyle.CHROMELESS);
-    player.setPlaylistEventListener(playlistEventListener);
-    player.setPlayerStateChangeListener(playerStateChangeListener);
-    player.setPlaybackEventListener(playbackEventListener);
-    //player.cueVideo("4x1dDNiBje8");
-    player.loadVideo("4x1dDNiBje8"); 
-  }
-
-  @Override
-  protected YouTubePlayer.Provider getYouTubePlayerProvider() {
-    //return (YouTubePlayerView) findViewById(R.id.youtube_view);
-	return youTubeView;
+	/*
+    Bundle bn = new Bundle();
+    bn = getIntent().getExtras();
+    HashMap<String, Object> getobj = new HashMap<String, Object>();
+    getobj = (HashMap<String, Object>) bn.getSerializable("bundleobj");
+    callback = (CallbackContext) getobj.get("callback");
+    */
   }
   
   private void log(String message) {
 
+  }
+  
+  @Override
+  public void onBackPressed() {
+      super.onBackPressed();
+      this.finish();
   }
   
   
@@ -177,6 +202,7 @@ public class PlayerViewDemoActivity extends YouTubeFailureRecoveryActivity {
 	    public void onVideoEnded() {
 	      playerState = "VIDEO_ENDED";
 	      log(playerState);
+	      finish();
 	    }
 
 	    @Override

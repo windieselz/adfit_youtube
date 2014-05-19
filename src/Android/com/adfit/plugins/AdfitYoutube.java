@@ -10,13 +10,18 @@ package com.adfit.plugins;
  * 
  */
 
+import java.util.LinkedHashMap;
+
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.json.JSONException;
 
 import android.content.Intent;
+import android.content.Context;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.adfit.plugins.PlayerViewDemoActivity;
@@ -25,9 +30,12 @@ public class AdfitYoutube extends CordovaPlugin {
 
 	@Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-		
-		if(action.equals("open")) {
-			String ytid = args.getString(0);
+		Log.d("Youtube","start android cordova execute");
+		if(action.equals("openYoutube")) {
+			String ytStr = args.getString(0);
+			JSONObject jsonObj = new JSONObject(ytStr);
+			String ytid = jsonObj.getString("youtubeId");
+			Log.d("Youtube","start android youtube ID : "+ytid);
         	this.open(ytid, callbackContext);
         	return true;
         }        
@@ -39,8 +47,16 @@ public class AdfitYoutube extends CordovaPlugin {
 			
 		//Intent intent = new Intent(null, Uri.parse("ytv://"+vid), this.cordova.getActivity(), OpenYouTubePlayerActivity.class);
 		PlayerViewDemoActivity ytView = new PlayerViewDemoActivity();
-		Intent myIntent = new Intent(this, ytView);
-		myIntent.putExtra("key", value); //Optional parameters
+		Context context = this.cordova.getActivity().getApplicationContext();
+		Intent myIntent = new Intent(context, PlayerViewDemoActivity.class);
+		myIntent.putExtra("youtubeid", vid);
+		/*
+		LinkedHashMap<String, Object> obj = new LinkedHashMap<String, Object>();
+        obj.put("callback", callbackContext); 
+		Bundle b = new Bundle();
+        b.putSerializable("bundleobj", obj);
+        myIntent.putExtras(b);
+        */
 		this.cordova.getActivity().startActivity(myIntent);
 	}
 	

@@ -49,8 +49,8 @@
             </feature>
         </config-file>
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <activity android:name="com.keyes.youtube.OpenYouTubePlayerActivity" 
-                android:screenOrientation="landscape" />
+            <activity android:name="com.adfit.plugins.PlayerViewDemoActivity" 
+                android:screenOrientation="portrait" />
         </config-file>
         <config-file target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
