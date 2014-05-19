@@ -37,7 +37,7 @@ import android.widget.LinearLayout;
  * Note, to use a {@link YouTubePlayerView}, your activity must extend {@link YouTubeBaseActivity}.
  */
 public class PlayerViewDemoActivity extends YouTubeFailureRecoveryActivity {
-	
+  private YouTubePlayerView youTubeView;	
   private YouTubePlayer player;
   private MyPlaylistEventListener playlistEventListener;
   private MyPlayerStateChangeListener playerStateChangeListener;
@@ -60,7 +60,7 @@ public class PlayerViewDemoActivity extends YouTubeFailureRecoveryActivity {
     //setContentView(R.layout.playerview_demo);
 
     //YouTubePlayerView youTubeView = (YouTubePlayerView) findViewById(R.id.youtube_view);
-    YouTubePlayerView youTubeView = new YouTubePlayerView(this);
+    youTubeView = new YouTubePlayerView(this);
     ll.addView(youTubeView);
     youTubeView.initialize(DeveloperKey.DEVELOPER_KEY, this);
     
@@ -87,7 +87,8 @@ public class PlayerViewDemoActivity extends YouTubeFailureRecoveryActivity {
 
   @Override
   protected YouTubePlayer.Provider getYouTubePlayerProvider() {
-    return (YouTubePlayerView) findViewById(R.id.youtube_view);
+    //return (YouTubePlayerView) findViewById(R.id.youtube_view);
+	return youTubeView;
   }
   
   private void log(String message) {
