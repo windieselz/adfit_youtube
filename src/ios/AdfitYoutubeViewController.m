@@ -36,7 +36,7 @@
 
     UIButton * btClose = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     [btClose setFrame:CGRectMake(10, 20, 48, 32)];
-    [btClose setTitle:@"Done" forState:UIControlStateNormal];
+    [btClose setTitle:@"ยกเลิก" forState:UIControlStateNormal];
     [btClose addTarget:self action:@selector(closeMp:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:btClose];
 
