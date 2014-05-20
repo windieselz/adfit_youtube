@@ -18,6 +18,8 @@ package com.adfit.plugins;
 
 
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer.ErrorReason;
@@ -36,9 +38,12 @@ import android.app.ActionBar.LayoutParams;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+
+import com.adfit.plugins.AdfitYoutube;
 
 import org.apache.cordova.CallbackContext;
 /**
@@ -53,8 +58,9 @@ public class PlayerViewDemoActivity extends YouTubeBaseActivity {
   private MyPlaylistEventListener playlistEventListener;
   private MyPlayerStateChangeListener playerStateChangeListener;
   private MyPlaybackEventListener playbackEventListener;
-  private CallbackContext callback;
+  public CallbackContext callback;
   private String ytId;
+  private Timer timer = null;
   
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -78,6 +84,9 @@ public class PlayerViewDemoActivity extends YouTubeBaseActivity {
     ytId = intent.getStringExtra("youtubeid");
     
     youTubeView = new YouTubePlayerView(this);
+    LayoutParams lay = new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT);
+    lay.gravity = Gravity.CENTER;
+    youTubeView.setLayoutParams(lay);
     youTubeView.initialize("AIzaSyCcvPX2czx97G2gF1BkilCaJIv4do7PA9E", new OnInitializedListener() {
 		@Override
 		public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult error){
@@ -114,9 +123,33 @@ public class PlayerViewDemoActivity extends YouTubeBaseActivity {
 
   }
   
+  public void initTimer(){
+	  if(timer == null){
+		  timer = new Timer();
+	      timer.scheduleAtFixedRate(new TimerTask() {
+	          @Override
+	          public void run() {
+	              runOnUiThread(new Runnable() {
+	                  public void run() {
+	                	  updateTimer();
+	                  }
+	              });
+	          }
+	      }, 0, 1000);
+	  }
+  }
+  
+  public void updateTimer(){
+	  int duration = (player.getDurationMillis()/1000);
+	  int cur = (player.getCurrentTimeMillis()/1000);
+	  Log.d("Youtube Duration", "Second left : "+String.valueOf(duration-cur));
+  }
+  
   @Override
   public void onBackPressed() {
       super.onBackPressed();
+      AdfitYoutube adfitYt = AdfitYoutube.getInstance();
+      adfitYt.sendCallback(false);
       this.finish();
   }
   
@@ -196,12 +229,15 @@ public class PlayerViewDemoActivity extends YouTubeBaseActivity {
 	    public void onVideoStarted() {
 	      playerState = "VIDEO_STARTED";
 	      log(playerState);
+	      //initTimer();
 	    }
 
 	    @Override
 	    public void onVideoEnded() {
 	      playerState = "VIDEO_ENDED";
 	      log(playerState);
+	      AdfitYoutube adfitYt = AdfitYoutube.getInstance();
+	      adfitYt.sendCallback(true);
 	      finish();
 	    }
 
